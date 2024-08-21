@@ -6,3 +6,6 @@ PPAPable is a web application for users who frequently distribute password-prote
 
 ## Usage
   * Try it on https://tetsuakibaba.github.io/PPAPable/
+
+https://github.com/user-attachments/assets/987621a2-d6ea-4714-9c96-3183ad1f1aa6
+
