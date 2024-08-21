@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ppapable</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- manifest.json の読み込み -->
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body class="p-5">
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered  modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">PPAPable Manual</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        When you receive an encrypted zip or pdf, please use this web application as a note of the
+                        password. It may be useful to use the file name as the name to save the file. See the video
+                        below for how to generate the password.
+                    </p>
+                    <video controls width="100%">
+                        <source src="manual.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <h1 class="display-1 mt-4">PPAPable
+            <span style="font-size:1rem;" id="appVersion"></span>
+            <span style="font-size:1rem;" onclick="window.location.reload();"><i class="bi bi-arrow-clockwise"></i>
+                reload</span>
+            <span style="font-size:1rem" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i
+                    class="bi bi-file-text"></i> manual</span>
+        </h1>
+        <p class="lead" id="project_lead">Password Manager</p>
+        <div class="row">
+            <!-- パスワード生成オプション -->
+            <div class="mb-3 col-sm-12 col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header"><i class="bi bi-gear"></i> Generate</div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <span for="passwordName" class="input-group-text">Name</span>
+                            <input type="text" id="passwordName" class="form-control" placeholder="Set name">
+                            <button id="generateButton" class="btn btn-primary" type="button"><i
+                                    class="bi bi-key"></i></button>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-header">Options</div>
+                            <div class="card-body">
+                                <div class="mb-2 input-group">
+                                    <span for="passwordLength" class="input-group-text">Length</span>
+                                    <input type="number" id="passwordLength" class="form-control" value="12" min="2"
+                                        max="64">
+
+                                    <div class="input-group-text">
+                                        <input class="form-check-input" type="checkbox" id="includeNumbers" checked
+                                            disabled>
+                                        <span class="ms-2 me-3">0-9</span>
+
+                                        <input class="form-check-input" type="checkbox" id="includeLetters" checked>
+                                        <span class="ms-2 me-3">
+                                            a-Z
+                                        </span>
+
+                                        <input class="form-check-input" type="checkbox" id="includeSymbols" checked>
+                                        <span class="ms-2">#-*</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <!-- 既存パスワードの追加用カード -->
+                <div class="card mb-3">
+                    <div class="card-header"><i class="bi bi-plus-circle"></i> Add Existing Password</div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <span for="existingPasswordName" class="input-group-text">Name</span>
+                            <input type="text" id="existingPasswordName" class="form-control" placeholder="Set name">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span for="existingPassword" class="input-group-text">Password</span>
+                            <input type="text" id="existingPassword" class="form-control" placeholder="Enter password">
+                        </div>
+                        <button id="addExistingButton" class="btn btn-secondary" type="button">Add
+                            Password</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3 col-sm-12 col-lg-8">
+                <div class="card">
+                    <div class="card-header"><i class="bi bi-card-list"></i> Saved Passwords</div>
+                    <div class="card-body">
+                        <!-- パスワード検索 -->
+                        <div class="input-group mb-3">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search by name">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        </div>
+
+                        <!-- 日付入力と削除ボタン -->
+                        <div class="input-group mb-3">
+                            <input type="date" id="deleteBeforeInput" class="form-control">
+                            <button id="deleteBeforeButton" class="btn btn-danger" type="button"><i
+                                    class="bi bi-trash"></i> Delete On or Before Date</button>
+                        </div>
+
+                        <!-- 保存されたパスワードのリスト -->
+                        <div id="passwordList" class="list-group"></div>
+
+                        <!-- データバックアップと復元 -->
+                        <div class="mt-4">
+                            <button id="backupButton" class="btn btn-secondary" type="button"><i
+                                    class="bi bi-download"></i> Download backup file</button>
+                            <input type="file" id="restoreInput" class="d-none">
+                            <button id="restoreButton" class="btn btn-secondary" type="button"><i
+                                    class="bi bi-arrow-counterclockwise"></i> Restore from backup file</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <footer>
+            <p class="text-center">
+                The creator is not responsible for any damage caused by the use of this application.
+                Please use this application at your own risk.
+                <br>&copy; 2024 PPAPable by Tetsuaki BABA<br>
+            </p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/gh/TetsuakiBaba/placeholderable@main/placeholderable.js"
+        crossorigin="anonymous" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
