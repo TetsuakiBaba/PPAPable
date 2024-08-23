@@ -52,7 +52,7 @@
         <p class="lead" id="project_lead">Password Manager</p>
         <div class="row">
             <!-- パスワード生成オプション -->
-            <div class="mb-3 col-sm-12 col-lg-4">
+            <div class="mb-3 col-sm-12 col-md-4">
                 <div class="card mb-3">
                     <div class="card-header"><i class="bi bi-gear"></i> Generate</div>
                     <div class="card-body">
@@ -93,9 +93,7 @@
 
 
                 </div>
-            </div>
-            <!-- 既存パスワードの追加用カード -->
-            <div class="mb-3 col-sm-12 col-lg-4">
+
                 <div class="card mb-3">
                     <div class="card-header"><i class="bi bi-plus-circle"></i> Add Existing Password</div>
                     <div class="card-body">
@@ -112,58 +110,60 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="mb-3 col-sm-12 col-lg-8">
-            <div class="card">
-                <div class="card-header"><i class="bi bi-card-list"></i> Saved Passwords</div>
-                <div class="card-body">
-                    <!-- パスワード検索 -->
-                    <div class="input-group mb-3">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search by name">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    </div>
+            <div class="mb-3 col-sm-12 col-md-8">
+                <div class="card">
+                    <div class="card-header"><i class="bi bi-card-list"></i> Saved Passwords</div>
+                    <div class="card-body">
+                        <!-- パスワード検索 -->
+                        <div class="input-group mb-3">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search by name">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        </div>
 
-                    <!-- 日付入力と削除ボタン -->
-                    <div class="input-group mb-3">
-                        <input type="date" id="deleteBeforeInput" class="form-control">
-                        <button id="deleteBeforeButton" class="btn btn-danger" type="button"><i class="bi bi-trash"></i>
-                            Delete On or Before Date</button>
-                    </div>
+                        <!-- 日付入力と削除ボタン -->
+                        <div class="input-group mb-3">
+                            <input type="date" id="deleteBeforeInput" class="form-control">
+                            <button id="deleteBeforeButton" class="btn btn-danger" type="button"><i
+                                    class="bi bi-trash"></i>
+                                Delete On or Before Date</button>
+                        </div>
 
-                    <!-- 保存されたパスワードのリスト -->
-                    <div id="passwordList" class="list-group"></div>
+                        <!-- 保存されたパスワードのリスト -->
+                        <div id="passwordList" class="list-group"></div>
 
-                    <!-- データバックアップと復元 -->
-                    <div class="mt-4">
-                        <button id="backupButton" class="btn btn-secondary" type="button"><i class="bi bi-download"></i>
-                            Download backup file</button>
-                        <input type="file" id="restoreInput" class="d-none">
-                        <button id="restoreButton" class="btn btn-secondary" type="button"><i
-                                class="bi bi-arrow-counterclockwise"></i> Restore from backup file</button>
+                        <!-- データバックアップと復元 -->
+                        <div class="mt-4">
+                            <button id="backupButton" class="btn btn-secondary" type="button"><i
+                                    class="bi bi-download"></i>
+                                Download backup file</button>
+                            <input type="file" id="restoreInput" class="d-none">
+                            <button id="restoreButton" class="btn btn-secondary" type="button"><i
+                                    class="bi bi-arrow-counterclockwise"></i> Restore from backup file</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <hr>
-        <footer>
-            <p class="text-center small text-muted">
-                The creator is not responsible for any damage caused by the use of this application.
-                Please use this application at your own risk.
-                <br>&copy; 2024 <a href="https://github.com/TetsuakiBaba/PPAPable" class="link-secondary"
-                    target="_blank">PPAPable <i class="bi-github"></i></a> by <a href="https://tetsuakibaba.jp"
-                    target="_blank" class="link-secondary">Tetsuaki BABA</a><br>
-            </p>
-        </footer>
-    </div>
-    <script src="js/placeholderable.js" crossorigin="anonymous" type="text/javascript"></script>
-    <script src="js/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-        crossorigin="anonymous"></script>
-    <script src="js/app.js"></script>
+            <hr>
+            <footer>
+                <p class="text-center small text-muted">
+                    The creator is not responsible for any damage caused by the use of this application.
+                    Please use this application at your own risk.
+                    <br>&copy; 2024 <a href="https://github.com/TetsuakiBaba/PPAPable" class="link-secondary"
+                        target="_blank">PPAPable <i class="bi-github"></i></a> by <a href="https://tetsuakibaba.jp"
+                        target="_blank" class="link-secondary">Tetsuaki BABA</a><br>
+                </p>
+            </footer>
+        </div>
+        <script src="js/placeholderable.js" crossorigin="anonymous" type="text/javascript"></script>
+        <script src="js/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+        <script src="js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+        <script src="js/app.js"></script>
 </body>
 
 </html>
