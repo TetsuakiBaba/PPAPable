@@ -34,6 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteBeforeButton = document.getElementById('deleteBeforeButton');
     const deleteBeforeInput = document.getElementById('deleteBeforeInput');
 
+
+    // localStorage に保存された ppapable.passwordLength の値があればelementをその値で更新
+    const savedPasswordLength = localStorage.getItem('ppapable.passwordLength');
+    if (savedPasswordLength) {
+        passwordLengthInput.value = savedPasswordLength;
+    }
+
+
     const storageKey = 'ppapable.passwords';
 
     function generatePassword() {
@@ -44,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const numbers = '0123456789';
         const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const symbols = '!@#$%^&*()_+[]{}|;:,.<>?';
+        const symbols = '!@#$%^&*()_+[]{}|;:<>?';
 
         let characters = '';
         if (includeNumbers) characters += numbers;
@@ -90,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 listItem.className = 'input-group mb-2';
                 listItem.innerHTML = `
                     <span class="input-group-text" style="width:20%;"><i class="bi bi-calendar me-2" title="${item.timestamp}"></i><span style="font-size:0.7rem;" title="${item.name}">${item.name}</span> </span>
-                    <input class="form-control" type="password" value="${item.password}" readonly/>`;
+                    <input class="form-control" type="password" value="${item.password}" />`;
 
                 // 表示/非表示切り替えボタン
                 const toggleVisibilityButton = document.createElement('button');
@@ -125,6 +133,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 };
                 listItem.appendChild(copyButton);
+
+                // パスワードを 現在入力されているパスワードに更新するボタンを追加
+                const updateButton = document.createElement('button');
+                updateButton.className = 'btn btn-primary btn-sm';
+                updateButton.innerHTML = '<i class="bi bi-floppy"></i>';
+                updateButton.onclick = function () {
+                    const passwordInput = listItem.querySelector('input');
+                    const password = passwordInput.value;
+                    if (password) {
+                        passwordData[index].password = password;
+                        localStorage.setItem(storageKey, JSON.stringify(passwordData));
+                        updateButton.classList.add('bg-success', 'text-white');
+                        updateButton.innerHTML = '<i class="bi bi-check"></i> Updated';
+                        setTimeout(() => {
+                            updateButton.classList.remove('bg-success', 'text-white');
+                            updateButton.innerHTML = '<i class="bi bi-floppy"></i>';
+                        }, 1500);
+                    }
+                };
+                listItem.appendChild(updateButton);
+
 
                 // 削除ボタンを追加
                 const deleteButton = document.createElement('button');

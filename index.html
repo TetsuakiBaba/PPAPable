@@ -69,6 +69,12 @@
                                     <span for="passwordLength" class="input-group-text">Length</span>
                                     <input type="number" id="passwordLength" class="form-control" value="12" min="2"
                                         max="64">
+                                    <script>
+                                        // lengthが変更されたら localStorage に保存
+                                        document.getElementById('passwordLength').addEventListener('change', function () {
+                                            localStorage.setItem('ppapable.passwordLength', this.value);
+                                        });
+                                    </script>
                                 </div>
                                 <div class="mb-2 input-group">
                                     <span class="input-group-text">Characters</span>
