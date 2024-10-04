@@ -98,17 +98,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 listItem.className = 'input-group mb-2';
                 listItem.innerHTML = `
                     <span class="input-group-text" style="width:20%;"><i class="bi bi-calendar me-2" title="${item.timestamp}"></i><span style="font-size:0.7rem;" title="${item.name}">${item.name}</span> </span>
-                    <input class="form-control" type="password" value="${item.password}" />`;
+                    <input class="form-control" type="text" value="${item.password}" />`;
 
                 // 表示/非表示切り替えボタン
                 const toggleVisibilityButton = document.createElement('button');
                 toggleVisibilityButton.className = 'btn btn-warning btn-sm';
-                toggleVisibilityButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                toggleVisibilityButton.innerHTML = '<i class="bi bi-eye"></i>';
+
                 toggleVisibilityButton.onclick = function () {
                     const passwordInput = listItem.querySelector('input');
                     if (passwordInput.type === 'password') {
                         passwordInput.type = 'text';
-                        toggleVisibilityButton.innerHTML = '<i class="bi bi-eye"></i>';
+                        toggleVisibilityButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
                     } else {
                         passwordInput.type = 'password';
                         toggleVisibilityButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
