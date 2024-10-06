@@ -147,25 +147,31 @@
                             <span class="input-group-text"><i class="bi bi-search"></i></span>
                         </div>
 
-                        <!-- 日付入力と削除ボタン -->
-                        <div class="input-group mb-3">
-                            <input type="date" id="deleteBeforeInput" class="form-control">
-                            <button id="deleteBeforeButton" class="btn btn-danger" type="button"><i
-                                    class="bi bi-trash"></i>
-                                Delete On or Before Date</button>
-                        </div>
-
                         <!-- 保存されたパスワードのリスト -->
                         <div id="passwordList" class="list-group"></div>
 
-                        <!-- データバックアップと復元 -->
-                        <div class="mt-4">
-                            <button id="backupButton" class="btn btn-secondary" type="button"><i
-                                    class="bi bi-download"></i>
-                                Download backup file</button>
-                            <input type="file" id="restoreInput" class="d-none">
-                            <button id="restoreButton" class="btn btn-secondary" type="button"><i
-                                    class="bi bi-arrow-counterclockwise"></i> Restore from backup file</button>
+                        <hr>
+                        <div class="card">
+                            <div class="card-header">Options</div>
+                            <div class="card-body">
+                                <!-- 日付入力と削除ボタン -->
+                                <div class="input-group mb-3">
+                                    <input type="date" id="deleteBeforeInput" class="form-control">
+                                    <button id="deleteBeforeButton" class="btn btn-danger" type="button"><i
+                                            class="bi bi-trash"></i>
+                                        Delete all before date</button>
+                                </div>
+
+                                <!-- データバックアップと復元 -->
+                                <div class="">
+                                    <button id="backupButton" class="btn btn-secondary" type="button"><i
+                                            class="bi bi-download"></i>
+                                        Download backup file</button>
+                                    <input type="file" id="restoreInput" class="d-none">
+                                    <button id="restoreButton" class="btn btn-secondary" type="button"><i
+                                            class="bi bi-arrow-counterclockwise"></i> Restore from backup file</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

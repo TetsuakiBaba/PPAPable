@@ -2,7 +2,7 @@
     "name": "PPAPable",
     "short_name": "PPAPable",
     "description": "PPAPable is a web application for users who frequently distribute password-protected zips, pdfs, etc. <mark>Any passwords stored here will not be transmitted to outside parties, but should not be used for account management.</mark>",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "icons": [
         {
             "src": "images/icon.png",
