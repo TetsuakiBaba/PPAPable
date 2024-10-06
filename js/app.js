@@ -1,3 +1,28 @@
+function generatePassword() {
+    const length = parseInt(document.querySelector('#passwordLength').value, 10);
+    const includeNumbers = document.querySelector('#includeNumbers').checked;
+    const includeLetters = document.querySelector('#includeLetters').checked;
+    const includeSymbols = document.querySelector('#includeSymbols').checked;
+
+    const numbers = '0123456789';
+    const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const symbols = '!@#$%&*_+;:<>?';
+
+    let characters = '';
+    if (includeNumbers) characters += numbers;
+    if (includeLetters) characters += letters;
+    if (includeSymbols) characters += symbols;
+
+    if (characters === '') return '';
+
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        password += characters[randomIndex];
+    }
+    return password;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // `manifest.json` を読み込む
     fetch('manifest.json')
@@ -23,9 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const includeSymbolsCheckbox = document.getElementById('includeSymbols');
     const generateButton = document.getElementById('generateButton');
     const generatedPasswordInput = document.getElementById('generatedPassword');
-    const existingPasswordNameInput = document.getElementById('existingPasswordName');
-    const existingPasswordInput = document.getElementById('existingPassword');
-    const addExistingButton = document.getElementById('addExistingButton');
     const searchInput = document.getElementById('searchInput');
     const passwordList = document.getElementById('passwordList');
     const backupButton = document.getElementById('backupButton');
@@ -44,31 +66,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const storageKey = 'ppapable.passwords';
 
-    function generatePassword() {
-        const length = parseInt(passwordLengthInput.value, 10);
-        const includeNumbers = includeNumbersCheckbox.checked;
-        const includeLetters = includeLettersCheckbox.checked;
-        const includeSymbols = includeSymbolsCheckbox.checked;
 
-        const numbers = '0123456789';
-        const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const symbols = '!@#$%^&*()_+[]{}|;:<>?';
 
-        let characters = '';
-        if (includeNumbers) characters += numbers;
-        if (includeLetters) characters += letters;
-        if (includeSymbols) characters += symbols;
-
-        if (characters === '') return '';
-
-        let password = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            password += characters[randomIndex];
-        }
-
-        return password;
-    }
+    document.getElementById('password').value = generatePassword();
 
     function savePassword(name, password) {
         const passwordData = JSON.parse(localStorage.getItem(storageKey)) || [];
@@ -76,13 +76,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // 名前の重複チェック
         const isNameDuplicate = passwordData.some(item => item.name === name);
         if (isNameDuplicate) {
-            alert('Already exists, please use a different name');
-            return;
+            // 重複している場合は nameにタイムスタンプを追加して保存
+            const timestamp = new Date().toISOString();
+            passwordData.push({ name: `${name} (${timestamp})`, password, timestamp });
         }
-
-        // タイムスタンプを追加して保存
-        const timestamp = new Date().toISOString();
-        passwordData.push({ name, password, timestamp });
+        else {
+            // タイムスタンプを追加して保存
+            const timestamp = new Date().toISOString();
+            passwordData.push({ name, password, timestamp });
+        }
         localStorage.setItem(storageKey, JSON.stringify(passwordData));
         displayPasswords();
     }
@@ -179,32 +181,25 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Please enter a name');
             return;
         }
-
-        const password = generatePassword();
-        if (password) {
-            savePassword(name, password);
-
-            // パスワードをクリップボードに自動コピー
-            navigator.clipboard.writeText(password).then(() => {
-                // alert('A password has been copied to the clipboard');
-                //here
-            });
-
-            passwordNameInput.value = '';
-        }
-    };
-
-    addExistingButton.onclick = function () {
-        const name = existingPasswordNameInput.value.trim();
-        const password = existingPasswordInput.value.trim();
-        if (!name || !password) {
-            alert('Please enter both a name and a password');
+        const pass = document.querySelector('#password').value;
+        if (pass == '') {
+            alert('Please generate a password');
             return;
         }
-        savePassword(name, password);
-        existingPasswordNameInput.value = '';
-        existingPasswordInput.value = '';
+        console.log(document.querySelector('#password').value);
+        savePassword(name, pass);
+
+        // パスワードをクリップボードに自動コピー
+        navigator.clipboard.writeText(pass).then(() => {
+            // alert('A password has been copied to the clipboard');
+            //here
+        });
+
+        // passwordNameInput.value = '';
+
     };
+
+
 
     searchInput.oninput = function () {
         displayPasswords(searchInput.value.trim());

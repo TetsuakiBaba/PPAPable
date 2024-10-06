@@ -58,9 +58,38 @@
                     <div class="card-body">
                         <div class="input-group mb-3">
                             <span for="passwordName" class="input-group-text">Name</span>
-                            <input type="text" id="passwordName" class="form-control" placeholder="Set name">
+                            <input type="text" id="passwordName" class="form-control" placeholder="set name">
                             <button id="generateButton" class="btn btn-primary" type="button"><i
-                                    class="bi bi-key"></i></button>
+                                    class="bi bi-floppy"></i></button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span for="password" class="input-group-text"><i class="bi bi-key"></i></span>
+                            <input type="text" id="password" class="form-control" placeholder="Generated password">
+                            <button id="copyButton" class="btn btn-secondary" type="button"><i
+                                    class="bi bi-clipboard"></i></button>
+                            <!-- #passwordの値をクリップボードに保存する関数 -->
+                            <script>
+                                document.getElementById('copyButton').addEventListener('click', function () {
+                                    navigator.clipboard.writeText(document.getElementById('password').value);
+                                    // btn-successに変更して、アイコンをチェックマークに変更
+                                    this.classList.remove('btn-secondary');
+                                    this.classList.add('btn-success');
+                                    this.innerHTML = '<i class="bi bi-clipboard-check"></i>';
+                                    // 1秒後に元に戻す
+                                    setTimeout(() => {
+                                        this.classList.remove('btn-success');
+                                        this.classList.add('btn-secondary');
+                                        this.innerHTML = '<i class="bi bi-clipboard"></i>';
+                                    }, 1000);
+
+                                });
+                            </script>
+                            <button id="copyButton" class="btn btn-primary" type="button"
+                                onclick="document.querySelector('#password').value=this.value=generatePassword();">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+
+
                         </div>
                         <div class="card mb-3">
                             <div class="card-header">Options</div>
@@ -100,21 +129,7 @@
 
                 </div>
 
-                <div class="card mb-3">
-                    <div class="card-header"><i class="bi bi-plus-circle"></i> Add Existing Password</div>
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                            <span for="existingPasswordName" class="input-group-text">Name</span>
-                            <input type="text" id="existingPasswordName" class="form-control" placeholder="Set name">
-                        </div>
-                        <div class="input-group mb-3">
-                            <span for="existingPassword" class="input-group-text">Password</span>
-                            <input type="text" id="existingPassword" class="form-control" placeholder="Enter password">
-                        </div>
-                        <button id="addExistingButton" class="btn btn-secondary" type="button">Add
-                            Password</button>
-                    </div>
-                </div>
+
             </div>
 
             <div class="mb-3 col-sm-12 col-md-8">
