@@ -102,23 +102,28 @@
                                         // lengthが変更されたら localStorage に保存
                                         document.getElementById('passwordLength').addEventListener('change', function () {
                                             localStorage.setItem('ppapable.passwordLength', this.value);
+                                            // パスワードを再生成
+                                            document.querySelector('#password').value = generatePassword();
                                         });
                                     </script>
                                 </div>
                                 <div class="mb-2 input-group">
-                                    <span class="input-group-text">Characters</span>
+
                                     <div class="input-group-text">
                                         <input class="form-check-input" type="checkbox" id="includeNumbers" checked
-                                            disabled>
+                                            disabled
+                                            onchange="document.querySelector('#password').value = generatePassword();">
                                         <span class="ms-2 me-3">0-9</span>
 
-                                        <input class="form-check-input" type="checkbox" id="includeLetters" checked>
+                                        <input class="form-check-input" type="checkbox" id="includeLetters" checked
+                                            onchange="document.querySelector('#password').value = generatePassword();">
                                         <span class="ms-2 me-3">
                                             a-Z
                                         </span>
 
-                                        <input class="form-check-input" type="checkbox" id="includeSymbols" checked>
-                                        <span class="ms-2">#-*</span>
+                                        <input class="form-check-input" type="checkbox" id="includeSymbols" checked
+                                            onchange="document.querySelector('#password').value = generatePassword();">
+                                        <span class=" ms-2">#-*</span>
                                     </div>
                                 </div>
                             </div>
