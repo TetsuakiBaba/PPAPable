@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('manifest.json')
         .then(response => response.json())
         .then(data => {
-            // バージョン情報をページに表示
             const version = data.version || 'unknown';
             const versionElement = document.getElementById('appVersion');
             versionElement.textContent = `Version: ${version}`;
@@ -56,34 +55,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteBeforeButton = document.getElementById('deleteBeforeButton');
     const deleteBeforeInput = document.getElementById('deleteBeforeInput');
 
-
-    // localStorage に保存された ppapable.passwordLength の値があればelementをその値で更新
     const savedPasswordLength = localStorage.getItem('ppapable.passwordLength');
     if (savedPasswordLength) {
         passwordLengthInput.value = savedPasswordLength;
     }
 
-
     const storageKey = 'ppapable.passwords';
-
-
 
     document.getElementById('password').value = generatePassword();
 
     function savePassword(name, password) {
         const passwordData = JSON.parse(localStorage.getItem(storageKey)) || [];
+        const timestamp = new Date().toISOString();
+
+        // UUID生成(ブラウザ環境で動作可能な簡易版)
+        const uuid = crypto.randomUUID ? crypto.randomUUID() : 'id-' + Math.random().toString(36).substr(2, 9);
 
         // 名前の重複チェック
         const isNameDuplicate = passwordData.some(item => item.name === name);
         if (isNameDuplicate) {
-            // 重複している場合は nameにタイムスタンプを追加して保存
-            const timestamp = new Date().toISOString();
-            passwordData.push({ name: `${name} (${timestamp})`, password, timestamp });
-        }
-        else {
-            // タイムスタンプを追加して保存
-            const timestamp = new Date().toISOString();
-            passwordData.push({ name, password, timestamp });
+            passwordData.push({ id: uuid, name: `${name} (${timestamp})`, password, timestamp });
+        } else {
+            passwordData.push({ id: uuid, name, password, timestamp });
         }
         localStorage.setItem(storageKey, JSON.stringify(passwordData));
         displayPasswords();
@@ -92,60 +85,65 @@ document.addEventListener('DOMContentLoaded', function () {
     function displayPasswords(filter = '') {
         const passwordData = JSON.parse(localStorage.getItem(storageKey)) || [];
         passwordList.innerHTML = '';
-        passwordData
+
+        const filteredData = passwordData
             .filter(item => item.name.includes(filter))
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // タイムスタンプでソート
-            .forEach((item, index) => {
-                const listItem = document.createElement('div');
-                listItem.className = 'input-group mb-2';
-                listItem.innerHTML = `
-                    <span class="input-group-text" style="width:20%;"><i class="bi bi-calendar me-2" title="${item.timestamp}"></i><span style="font-size:0.7rem;" title="${item.name}">${item.name}</span> </span>
-                    <input class="form-control" type="text" value="${item.password}" />`;
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-                // 表示/非表示切り替えボタン
-                const toggleVisibilityButton = document.createElement('button');
-                toggleVisibilityButton.className = 'btn btn-warning btn-sm';
-                toggleVisibilityButton.innerHTML = '<i class="bi bi-eye"></i>';
+        filteredData.forEach((item) => {
+            const listItem = document.createElement('div');
+            listItem.className = 'input-group mb-2';
+            listItem.innerHTML = `
+                <span class="input-group-text" style="width:20%;"><i class="bi bi-calendar me-2" title="${item.timestamp}"></i><span style="font-size:0.7rem;" title="${item.name}">${item.name}</span> </span>
+                <input class="form-control" type="text" value="${item.password}" />
+            `;
 
-                toggleVisibilityButton.onclick = function () {
-                    const passwordInput = listItem.querySelector('input');
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        toggleVisibilityButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
-                    } else {
-                        passwordInput.type = 'password';
-                        toggleVisibilityButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
-                    }
-                };
-                listItem.appendChild(toggleVisibilityButton);
+            // 表示/非表示切り替えボタン
+            const toggleVisibilityButton = document.createElement('button');
+            toggleVisibilityButton.className = 'btn btn-warning btn-sm';
+            toggleVisibilityButton.innerHTML = '<i class="bi bi-eye"></i>';
+            toggleVisibilityButton.onclick = function () {
+                const passwordInput = listItem.querySelector('input');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleVisibilityButton.innerHTML = '<i class="bi bi-eye"></i>';
+                } else {
+                    passwordInput.type = 'password';
+                    toggleVisibilityButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                }
+            };
+            listItem.appendChild(toggleVisibilityButton);
 
-                // クリップボードにコピーするボタンを追加
-                const copyButton = document.createElement('button');
-                copyButton.className = 'btn btn-secondary btn-sm';
-                copyButton.innerHTML = '<i class="bi bi-clipboard ms-4 me-4"></i>';
-                copyButton.onclick = function () {
-                    navigator.clipboard.writeText(item.password).then(() => {
-                        copyButton.classList.add('bg-success', 'text-white');
-                        copyButton.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied';
-                        listItem.querySelector('input').select();
-                        setTimeout(() => {
-                            copyButton.classList.remove('bg-success', 'text-white');
-                            copyButton.innerHTML = '<i class="bi bi-clipboard ms-4 me-4"></i>';
-                            window.getSelection().removeAllRanges();
-                        }, 1500);
-                    });
-                };
-                listItem.appendChild(copyButton);
+            // クリップボードにコピーするボタン
+            const copyButton = document.createElement('button');
+            copyButton.className = 'btn btn-secondary btn-sm';
+            copyButton.innerHTML = '<i class="bi bi-clipboard ms-4 me-4"></i>';
+            copyButton.onclick = function () {
+                navigator.clipboard.writeText(item.password).then(() => {
+                    copyButton.classList.add('bg-success', 'text-white');
+                    copyButton.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied';
+                    listItem.querySelector('input').select();
+                    setTimeout(() => {
+                        copyButton.classList.remove('bg-success', 'text-white');
+                        copyButton.innerHTML = '<i class="bi bi-clipboard ms-4 me-4"></i>';
+                        window.getSelection().removeAllRanges();
+                    }, 1500);
+                });
+            };
+            listItem.appendChild(copyButton);
 
-                // パスワードを 現在入力されているパスワードに更新するボタンを追加
-                const updateButton = document.createElement('button');
-                updateButton.className = 'btn btn-primary btn-sm';
-                updateButton.innerHTML = '<i class="bi bi-floppy"></i>';
-                updateButton.onclick = function () {
-                    const passwordInput = listItem.querySelector('input');
-                    const password = passwordInput.value;
-                    if (password) {
-                        passwordData[index].password = password;
+            // パスワード更新ボタン
+            const updateButton = document.createElement('button');
+            updateButton.className = 'btn btn-primary btn-sm';
+            updateButton.innerHTML = '<i class="bi bi-floppy"></i>';
+            updateButton.onclick = function () {
+                const passwordInput = listItem.querySelector('input');
+                const newPassword = passwordInput.value;
+                if (newPassword) {
+                    // IDで実データを更新
+                    const pdIndex = passwordData.findIndex(p => p.id === item.id);
+                    if (pdIndex > -1) {
+                        passwordData[pdIndex].password = newPassword;
                         localStorage.setItem(storageKey, JSON.stringify(passwordData));
                         updateButton.classList.add('bg-success', 'text-white');
                         updateButton.innerHTML = '<i class="bi bi-check"></i> Updated';
@@ -154,25 +152,30 @@ document.addEventListener('DOMContentLoaded', function () {
                             updateButton.innerHTML = '<i class="bi bi-floppy"></i>';
                         }, 1500);
                     }
-                };
-                listItem.appendChild(updateButton);
+                }
+            };
+            listItem.appendChild(updateButton);
 
-
-                // 削除ボタンを追加
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'btn btn-danger btn-sm';
-                deleteButton.innerHTML = '<i class="bi bi-trash ms"></i>';
-                deleteButton.onclick = function () {
-                    if (confirm('Are you sure you want to delete?')) {
-                        passwordData.splice(index, 1);
+            // 削除ボタン
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-danger btn-sm';
+            deleteButton.innerHTML = '<i class="bi bi-trash ms"></i>';
+            deleteButton.dataset.id = item.id;
+            deleteButton.onclick = function () {
+                if (confirm('Are you sure you want to delete?')) {
+                    const deleteId = this.dataset.id;
+                    const deleteIndex = passwordData.findIndex(p => p.id === deleteId);
+                    if (deleteIndex > -1) {
+                        passwordData.splice(deleteIndex, 1);
                         localStorage.setItem(storageKey, JSON.stringify(passwordData));
                         displayPasswords(filter);
                     }
-                };
-                listItem.appendChild(deleteButton);
+                }
+            };
+            listItem.appendChild(deleteButton);
 
-                passwordList.appendChild(listItem);
-            });
+            passwordList.appendChild(listItem);
+        });
     }
 
     generateButton.onclick = function () {
@@ -191,15 +194,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // パスワードをクリップボードに自動コピー
         navigator.clipboard.writeText(pass).then(() => {
-            // alert('A password has been copied to the clipboard');
-            //here
+            //ここではアラート等省略
         });
-
-        // passwordNameInput.value = '';
-
     };
-
-
 
     searchInput.oninput = function () {
         displayPasswords(searchInput.value.trim());
@@ -253,5 +250,18 @@ document.addEventListener('DOMContentLoaded', function () {
         displayPasswords();
     };
 
+    // 初期読み込み
     displayPasswords();
+
+    // 再生成ボタン(id重複を避けるため"regenerateButton"とする)
+    const regenerateButton = document.querySelector('#password ~ button.btn-primary');
+    regenerateButton.addEventListener('click', function () {
+        document.querySelector('#password').value = generatePassword();
+    });
+
+    // passwordLength変更時にパスワード再生成
+    document.getElementById('passwordLength').addEventListener('change', function () {
+        localStorage.setItem('ppapable.passwordLength', this.value);
+        document.querySelector('#password').value = generatePassword();
+    });
 });
